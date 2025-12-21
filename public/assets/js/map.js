@@ -1,6 +1,9 @@
 /**
- * Map JS - Initialisation de la carte du monde
+ * Map JS - Initialisation et mise à jour de la carte du monde
  */
+
+let worldMap = null;
+let currentMapValues = {};
 
 function initWorldMap() {
     if (typeof jsVectorMap === 'undefined') {
@@ -9,15 +12,15 @@ function initWorldMap() {
     }
 
     const countryData = window.countryData || {};
-    const values = {};
+    currentMapValues = {};
 
     Object.keys(countryData).forEach(code => {
         if (code && code !== 'XX') {
-            values[code.toUpperCase()] = countryData[code];
+            currentMapValues[code.toUpperCase()] = countryData[code];
         }
     });
 
-    new jsVectorMap({
+    worldMap = new jsVectorMap({
         selector: '#world-map',
         map: 'world',
         zoomButtons: true,
@@ -32,16 +35,36 @@ function initWorldMap() {
         },
         series: {
             regions: [{
-                values: values,
+                values: currentMapValues,
                 scale: ['#22c55e', '#4ade80'],
                 normalizeFunction: 'polynomial'
             }]
         },
         onRegionTooltipShow: function(e, el, code) {
-            const clicks = values[code] || 0;
+            const clicks = currentMapValues[code] || 0;
             el.innerHTML = `${el.innerHTML}: ${clicks.toLocaleString()} clics`;
         }
     });
+}
+
+/**
+ * Met à jour les données de la carte
+ */
+function updateWorldMap(countryData) {
+    if (!worldMap) return;
+
+    currentMapValues = {};
+    Object.keys(countryData).forEach(code => {
+        if (code && code !== 'XX') {
+            currentMapValues[code.toUpperCase()] = countryData[code];
+        }
+    });
+
+    // Mettre à jour les valeurs de la série
+    worldMap.params.series.regions[0].values = currentMapValues;
+
+    // Recalculer les couleurs basées sur les nouvelles valeurs
+    worldMap.setValues(currentMapValues);
 }
 
 // Initialiser la carte au chargement

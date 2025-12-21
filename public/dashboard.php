@@ -90,6 +90,10 @@ function handlePostActions(): ?string
 
 $error = handlePostActions();
 $period = $_GET['period'] ?? '24h';
+$validPeriods = ['1h', '6h', '24h', '48h', '7d', '30d', '90d', '1y', 'all'];
+if (!in_array($period, $validPeriods)) {
+    $period = '24h';
+}
 $linksPage = max(1, (int) ($_GET['links_page'] ?? 1));
 $data = fetchDashboardData($linksPage);
 $rotatorStats = fetchRotatorStats($data['activeSites'], $period);

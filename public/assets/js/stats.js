@@ -70,6 +70,11 @@ async function refreshStats(showSpinner = false) {
             if (data.os) updateDetailedStats('statsOS', data.os, 'os');
             if (data.urls) updateUrlStats('statsUrls', data.urls);
 
+            // Mise à jour de la carte du monde
+            if (data.countries && typeof updateWorldMap === 'function') {
+                updateWorldMap(data.countries);
+            }
+
             lastStatsData = data.stats;
             updateLastUpdateTime();
         }
