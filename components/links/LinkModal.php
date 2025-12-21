@@ -39,12 +39,27 @@ function renderLinkModal(array $sources): void
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Source</label>
-                    <select name="source" id="linkSource" class="input" required>
-                        <option value="">Sélectionnez...</option>
-                        <?php foreach ($sources as $key => $label): ?>
-                        <option value="<?= $key ?>"><?= e($label) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <div class="flex gap-2">
+                        <select name="source" id="linkSource" class="input flex-1" required>
+                            <option value="">Sélectionnez...</option>
+                            <?php foreach ($sources as $key => $label): ?>
+                            <option value="<?= $key ?>"><?= e($label) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="button" onclick="toggleAddSource()" class="btn btn-secondary px-3" title="Ajouter une source">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Zone d'ajout de source -->
+                    <div id="addSourceSection" class="hidden mt-2 p-3 bg-surface-hover rounded-lg border border-border">
+                        <div class="flex gap-2">
+                            <input type="text" id="newSourceLabel" class="input flex-1 text-sm" placeholder="Nom de la nouvelle source" maxlength="50">
+                            <button type="button" onclick="addNewSource()" class="btn btn-primary px-3 text-sm">Ajouter</button>
+                        </div>
+                        <p class="text-xs text-text-secondary mt-1">La source sera ajoutée à la liste et sélectionnée automatiquement.</p>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

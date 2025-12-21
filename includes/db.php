@@ -111,6 +111,44 @@ function initTables(PDO $pdo): void
         )
     ');
 
+    // Table des sources personnalisées
+    $pdo->exec('
+        CREATE TABLE IF NOT EXISTS sources (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT NOT NULL UNIQUE,
+            label TEXT NOT NULL,
+            is_default INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ');
+
+    // Insérer les sources par défaut si la table est vide
+    $stmt = $pdo->query('SELECT COUNT(*) as count FROM sources');
+    $result = $stmt->fetch();
+    if ($result['count'] === 0) {
+        $defaultSources = [
+            ['twitter', 'Twitter / X', 1],
+            ['linkedin', 'LinkedIn', 1],
+            ['pinterest', 'Pinterest', 1],
+            ['medium', 'Medium', 1],
+            ['github', 'GitHub', 1],
+            ['youtube', 'YouTube', 1],
+            ['reddit', 'Reddit', 1],
+            ['tumblr', 'Tumblr', 1],
+            ['facebook', 'Facebook', 1],
+            ['instagram', 'Instagram', 1],
+            ['tiktok', 'TikTok', 1],
+            ['bitly', 'Bitly', 1],
+            ['rebrandly', 'Rebrandly', 1],
+            ['shorturl', 'Short URL', 1],
+            ['autre', 'Autre', 1]
+        ];
+        $stmt = $pdo->prepare('INSERT INTO sources (slug, label, is_default) VALUES (?, ?, ?)');
+        foreach ($defaultSources as $source) {
+            $stmt->execute($source);
+        }
+    }
+
     // Créer l'admin par défaut si aucun utilisateur n'existe
     $stmt = $pdo->query('SELECT COUNT(*) as count FROM users');
     $result = $stmt->fetch();
@@ -303,4 +341,87 @@ function removeCampaignId(int $id): void
     $ids = getSavedCampaignIds();
     $ids = array_values(array_filter($ids, fn($i) => $i !== $id));
     setSetting('popcash_campaign_ids', json_encode($ids));
+}
+
+/**
+ * Récupère toutes les sources (pour le dropdown)
+ */
+function getAllSources(): array
+{
+    $pdo = getDB();
+    $stmt = $pdo->query('SELECT slug, label FROM sources ORDER BY is_default DESC, label ASC');
+    $sources = [];
+    while ($row = $stmt->fetch()) {
+        $sources[$row['slug']] = $row['label'];
+    }
+    return $sources;
+}
+
+/**
+ * Récupère toutes les sources avec leurs détails
+ */
+function getAllSourcesDetailed(): array
+{
+    $pdo = getDB();
+    $stmt = $pdo->query('SELECT * FROM sources ORDER BY is_default DESC, label ASC');
+    return $stmt->fetchAll();
+}
+
+/**
+ * Ajoute une nouvelle source
+ */
+function addSource(string $label): ?string
+{
+    $pdo = getDB();
+
+    // Générer le slug à partir du label
+    $slug = strtolower(trim($label));
+    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+    $slug = trim($slug, '-');
+
+    if (empty($slug)) {
+        return null;
+    }
+
+    // Vérifier si le slug existe déjà
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM sources WHERE slug = ?');
+    $stmt->execute([$slug]);
+    if ($stmt->fetchColumn() > 0) {
+        // Ajouter un suffixe unique
+        $slug = $slug . '-' . time();
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO sources (slug, label, is_default) VALUES (?, ?, 0)');
+    $stmt->execute([$slug, trim($label)]);
+
+    return $slug;
+}
+
+/**
+ * Supprime une source (seulement si non utilisée et non par défaut)
+ */
+function deleteSource(string $slug): bool
+{
+    $pdo = getDB();
+
+    // Vérifier si la source est par défaut
+    $stmt = $pdo->prepare('SELECT is_default FROM sources WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $source = $stmt->fetch();
+
+    if (!$source || $source['is_default']) {
+        return false;
+    }
+
+    // Vérifier si la source est utilisée par des liens
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM links WHERE source = ?');
+    $stmt->execute([$slug]);
+    if ($stmt->fetchColumn() > 0) {
+        return false;
+    }
+
+    $stmt = $pdo->prepare('DELETE FROM sources WHERE slug = ? AND is_default = 0');
+    $stmt->execute([$slug]);
+
+    return $stmt->rowCount() > 0;
 }

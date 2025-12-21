@@ -28,12 +28,79 @@ function closeLinkModal() {
     document.getElementById('linkModalBackdrop').classList.remove('active');
     document.body.style.overflow = '';
     isEditMode = false;
+
+    // Réinitialiser la section d'ajout de source
+    const addSourceSection = document.getElementById('addSourceSection');
+    if (addSourceSection) {
+        addSourceSection.classList.add('hidden');
+        document.getElementById('newSourceLabel').value = '';
+    }
 }
 
 function deleteLink(id, name) {
     if (confirm(`Supprimer le lien "${name}" ?`)) {
         document.getElementById('deleteLinkId').value = id;
         document.getElementById('deleteLinkForm').submit();
+    }
+}
+
+// ============================================================
+// Gestion des Sources
+// ============================================================
+
+function toggleAddSource() {
+    const section = document.getElementById('addSourceSection');
+    section.classList.toggle('hidden');
+    if (!section.classList.contains('hidden')) {
+        document.getElementById('newSourceLabel').focus();
+    }
+}
+
+async function addNewSource() {
+    const input = document.getElementById('newSourceLabel');
+    const label = input.value.trim();
+
+    if (!label) {
+        input.focus();
+        return;
+    }
+
+    try {
+        const response = await fetch('api-sources.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ label })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || 'Erreur lors de l\'ajout');
+            return;
+        }
+
+        // Ajouter la nouvelle option au select
+        const select = document.getElementById('linkSource');
+        const option = document.createElement('option');
+        option.value = data.slug;
+        option.textContent = data.label;
+        select.appendChild(option);
+
+        // Sélectionner la nouvelle source
+        select.value = data.slug;
+
+        // Réinitialiser et masquer le formulaire
+        input.value = '';
+        document.getElementById('addSourceSection').classList.add('hidden');
+
+        // Animation de confirmation
+        select.classList.add('flash-update');
+        setTimeout(() => select.classList.remove('flash-update'), 800);
+
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion');
     }
 }
 

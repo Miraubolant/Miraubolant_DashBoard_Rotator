@@ -21,6 +21,7 @@ require_once __DIR__ . '/../handlers/LinkHandler.php';
 require_once __DIR__ . '/../handlers/RotatorHandler.php';
 require_once __DIR__ . '/../handlers/SyncHandler.php';
 require_once __DIR__ . '/../handlers/PopcashHandler.php';
+require_once __DIR__ . '/../handlers/SourceHandler.php';
 
 // Services
 require_once __DIR__ . '/../services/StatsService.php';
@@ -79,6 +80,10 @@ function handlePostActions(): ?string
             return handleAddCampaign();
         case 'remove_campaign':
             return handleRemoveCampaign();
+        case 'add_source':
+            return handleAddSource();
+        case 'delete_source':
+            return handleDeleteSource();
         default:
             return null;
     }

@@ -5,26 +5,11 @@
 
 /**
  * Sources disponibles pour les liens blanchis
+ * Récupère les sources depuis la base de données
  */
 function getLinkSources(): array
 {
-    return [
-        'twitter' => 'Twitter / X',
-        'linkedin' => 'LinkedIn',
-        'pinterest' => 'Pinterest',
-        'medium' => 'Medium',
-        'github' => 'GitHub',
-        'youtube' => 'YouTube',
-        'reddit' => 'Reddit',
-        'tumblr' => 'Tumblr',
-        'facebook' => 'Facebook',
-        'instagram' => 'Instagram',
-        'tiktok' => 'TikTok',
-        'bitly' => 'Bitly',
-        'rebrandly' => 'Rebrandly',
-        'shorturl' => 'Short URL',
-        'autre' => 'Autre'
-    ];
+    return getAllSources();
 }
 
 /**
