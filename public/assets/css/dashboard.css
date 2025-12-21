@@ -1,0 +1,239 @@
+/**
+ * Dashboard CSS - Styles spécifiques au dashboard
+ * Extrait de dashboard.php pour une meilleure organisation
+ */
+
+/* ============================================================
+   Custom Scrollbar
+   ============================================================ */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4a4a4a;
+}
+
+/* ============================================================
+   Flash effect on update
+   ============================================================ */
+@keyframes flashUpdate {
+    0% { background-color: rgba(74, 222, 128, 0.15); }
+    100% { background-color: transparent; }
+}
+.flash-update {
+    animation: flashUpdate 0.8s ease-out;
+}
+
+/* ============================================================
+   Collapsible sections
+   ============================================================ */
+.section-header {
+    cursor: pointer;
+    user-select: none;
+}
+.section-header:hover .toggle-icon {
+    color: white;
+}
+.toggle-icon {
+    transition: transform 0.2s ease;
+}
+.section-collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+.section-content {
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    overflow: hidden;
+}
+.section-collapsed .section-content {
+    max-height: 0 !important;
+    opacity: 0;
+    padding: 0 !important;
+}
+
+/* ============================================================
+   Modal styles
+   ============================================================ */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+.modal-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-container {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+.modal-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background: #111111;
+    border: 1px solid #1f1f1f;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #1f1f1f;
+}
+.modal-body {
+    padding: 1.5rem;
+}
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #1f1f1f;
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* ============================================================
+   Mini tableaux stats
+   ============================================================ */
+.mini-table {
+    width: 100%;
+    font-size: 0.75rem;
+}
+.mini-table th {
+    text-align: left;
+    font-weight: 500;
+    color: #6b7280;
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid #1f1f1f;
+    white-space: nowrap;
+}
+.mini-table td {
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: middle;
+}
+.mini-table tr:last-child td {
+    border-bottom: none;
+}
+.mini-table tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+}
+.mini-table .col-label {
+    color: white;
+}
+.mini-table .col-value {
+    text-align: right;
+    color: #9ca3af;
+    font-variant-numeric: tabular-nums;
+}
+.mini-table .col-pct {
+    text-align: right;
+    width: 50px;
+    color: #6b7280;
+}
+.mini-table .pct-bar {
+    display: inline-block;
+    height: 4px;
+    border-radius: 2px;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+.mini-table tr.stat-item-updated td {
+    animation: rowFlash 0.6s ease-out;
+}
+@keyframes rowFlash {
+    0% { background-color: rgba(74, 222, 128, 0.15); }
+    100% { background-color: transparent; }
+}
+
+/* ============================================================
+   Animations pour mise à jour des stats
+   ============================================================ */
+@keyframes statPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+@keyframes statGlow {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+@keyframes valueChange {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+@keyframes slideInValue {
+    0% { opacity: 0; transform: translateY(-8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.stat-item-updated {
+    animation: statPulse 0.6s ease-out;
+}
+.stat-item-updated .stat-bar {
+    animation: statGlow 0.8s ease-out;
+}
+.stat-value-changed {
+    animation: valueChange 0.4s ease-out;
+    color: #4ade80 !important;
+}
+.stat-value-decreased {
+    color: #f87171 !important;
+}
+.stat-delta {
+    animation: slideInValue 0.3s ease-out;
+    font-size: 10px;
+    margin-left: 4px;
+}
+.stat-delta-positive {
+    color: #4ade80;
+}
+.stat-delta-negative {
+    color: #f87171;
+}
+.stat-item {
+    margin-bottom: 0.5rem;
+}
+.stat-item:last-child {
+    margin-bottom: 0;
+}

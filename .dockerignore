@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Données locales
+data/*
+!data/.gitkeep
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+*.bak
+*.backup

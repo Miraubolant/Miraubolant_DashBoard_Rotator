@@ -1,0 +1,81 @@
+/**
+ * VintDress Link Manager - Styles personnalisés
+ *
+ * Les styles principaux sont gérés via TailwindCSS CDN.
+ * Ce fichier contient uniquement les overrides ou styles spécifiques.
+ */
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #161b22;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
+}
+
+/* Selection */
+::selection {
+    background-color: rgba(88, 166, 255, 0.3);
+    color: #ffffff;
+}
+
+/* Focus visible pour accessibilité */
+:focus-visible {
+    outline: 2px solid #58a6ff;
+    outline-offset: 2px;
+}
+
+/* Animation de chargement */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading {
+    animation: spin 1s linear infinite;
+}
+
+/* Transitions globales */
+* {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .btn,
+    .toast {
+        display: none !important;
+    }
+
+    main {
+        margin-left: 0 !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .card {
+        border: 1px solid #ccc;
+        background: white;
+    }
+}
