@@ -92,6 +92,25 @@ function manualRefreshStats() {
 }
 
 /**
+ * Changement de période sans refresh de page
+ */
+function changePeriod(newPeriod) {
+    // Mettre à jour la période globale
+    window.currentPeriod = newPeriod;
+
+    // Réinitialiser les stats précédentes pour éviter les faux deltas
+    previousStats = { devices: {}, browsers: {}, countries: {}, cities: {}, os: {}, urls: {} };
+
+    // Mettre à jour l'URL sans refresh (pour les bookmarks/refresh manuel)
+    const url = new URL(window.location);
+    url.searchParams.set('period', newPeriod);
+    window.history.replaceState({}, '', url);
+
+    // Refresh immédiat avec spinner
+    refreshStats(true);
+}
+
+/**
  * Mise à jour des valeurs avec animation subtile
  * Note: Les baisses sont mises à jour silencieusement (sans effet rouge)
  */

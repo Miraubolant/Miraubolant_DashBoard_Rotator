@@ -112,10 +112,16 @@ renderHeader('Dashboard', 'dashboard');
         <span id="statsLastUpdate" class="text-text-secondary text-xs hidden sm:block"></span>
     </div>
     <div class="flex items-center gap-2">
-        <select id="periodSelect" onchange="window.location.href='?period='+this.value" class="input text-xs py-1.5 w-auto">
+        <select id="periodSelect" onchange="changePeriod(this.value)" class="input text-xs py-1.5 w-auto">
+            <option value="1h" <?= $period === '1h' ? 'selected' : '' ?>>1h</option>
+            <option value="6h" <?= $period === '6h' ? 'selected' : '' ?>>6h</option>
             <option value="24h" <?= $period === '24h' ? 'selected' : '' ?>>24h</option>
+            <option value="48h" <?= $period === '48h' ? 'selected' : '' ?>>48h</option>
             <option value="7d" <?= $period === '7d' ? 'selected' : '' ?>>7j</option>
             <option value="30d" <?= $period === '30d' ? 'selected' : '' ?>>30j</option>
+            <option value="90d" <?= $period === '90d' ? 'selected' : '' ?>>90j</option>
+            <option value="1y" <?= $period === '1y' ? 'selected' : '' ?>>1 an</option>
+            <option value="all" <?= $period === 'all' ? 'selected' : '' ?>>Tout</option>
         </select>
         <button type="button" id="refreshStatsBtn" onclick="manualRefreshStats()" class="btn btn-secondary py-1.5 px-2" title="Rafraîchir">
             <svg id="refreshIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

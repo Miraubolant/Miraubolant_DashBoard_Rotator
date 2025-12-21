@@ -20,7 +20,7 @@ header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $period = $_GET['period'] ?? '24h';
-$validPeriods = ['24h', '7d', '30d'];
+$validPeriods = ['1h', '6h', '24h', '48h', '7d', '30d', '90d', '1y', 'all'];
 if (!in_array($period, $validPeriods)) {
     $period = '24h';
 }
