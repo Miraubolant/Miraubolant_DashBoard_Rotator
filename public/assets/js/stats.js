@@ -93,6 +93,7 @@ function manualRefreshStats() {
 
 /**
  * Mise à jour des valeurs avec animation subtile
+ * Note: Les baisses sont mises à jour silencieusement (sans effet rouge)
  */
 function updateStatValue(elementId, newValue, animate = false) {
     const el = document.getElementById(elementId);
@@ -105,9 +106,16 @@ function updateStatValue(elementId, newValue, animate = false) {
 
     const isIncrease = newValue > currentValue;
 
+    // Si c'est une baisse, mettre à jour silencieusement sans animation
+    if (!isIncrease) {
+        el.textContent = formatNumber(newValue);
+        return;
+    }
+
+    // Animation uniquement pour les hausses
     if (animate) {
         el.style.transition = 'color 0.2s, transform 0.2s';
-        el.style.color = isIncrease ? '#4ade80' : '#f87171';
+        el.style.color = '#4ade80';
         el.style.transform = 'scale(1.1)';
         setTimeout(() => {
             el.textContent = formatNumber(newValue);
@@ -118,7 +126,7 @@ function updateStatValue(elementId, newValue, animate = false) {
         }, 200);
     } else {
         el.style.transition = 'color 0.3s, transform 0.15s';
-        el.style.color = isIncrease ? '#4ade80' : '#f87171';
+        el.style.color = '#4ade80';
         el.style.transform = 'scale(1.05)';
         el.textContent = formatNumber(newValue);
         setTimeout(() => {
@@ -182,16 +190,17 @@ function updateDetailedStats(containerId, data, type) {
         const color = getBarColorHex(type, key);
         const prevCount = prevData[key] || 0;
         const delta = count - prevCount;
-        const hasChanged = delta !== 0 && prevCount > 0;
+        const isIncrease = delta > 0 && prevCount > 0;
 
-        if (hasChanged) hasChanges = true;
+        if (isIncrease) hasChanges = true;
 
-        const deltaHtml = hasChanged
-            ? `<span class="stat-delta ${delta > 0 ? 'stat-delta-positive' : 'stat-delta-negative'}">${delta > 0 ? '+' : ''}${delta}</span>`
+        // Afficher delta uniquement pour les hausses (jamais de rouge)
+        const deltaHtml = isIncrease
+            ? `<span class="stat-delta stat-delta-positive">+${delta}</span>`
             : '';
 
-        const valueClass = hasChanged ? (delta > 0 ? 'stat-value-changed' : 'stat-value-changed stat-value-decreased') : '';
-        const rowClass = hasChanged ? 'stat-item-updated' : '';
+        const valueClass = isIncrease ? 'stat-value-changed' : '';
+        const rowClass = isIncrease ? 'stat-item-updated' : '';
 
         const labelContent = type === 'country'
             ? `<span class="mr-1.5">${countryCodeToFlag(key)}</span>${escapeHtml(key)}`
@@ -240,16 +249,17 @@ function updateUrlStats(containerId, data) {
         const shortUrl = url.length > 30 ? url.substring(0, 30) + '...' : url;
         const prevCount = prevData[url] || 0;
         const delta = count - prevCount;
-        const hasChanged = delta !== 0 && prevCount > 0;
+        const isIncrease = delta > 0 && prevCount > 0;
 
-        if (hasChanged) hasChanges = true;
+        if (isIncrease) hasChanges = true;
 
-        const deltaHtml = hasChanged
-            ? `<span class="stat-delta ${delta > 0 ? 'stat-delta-positive' : 'stat-delta-negative'}">${delta > 0 ? '+' : ''}${delta}</span>`
+        // Afficher delta uniquement pour les hausses (jamais de rouge)
+        const deltaHtml = isIncrease
+            ? `<span class="stat-delta stat-delta-positive">+${delta}</span>`
             : '';
 
-        const valueClass = hasChanged ? (delta > 0 ? 'stat-value-changed' : 'stat-value-changed stat-value-decreased') : '';
-        const rowClass = hasChanged ? 'stat-item-updated' : '';
+        const valueClass = isIncrease ? 'stat-value-changed' : '';
+        const rowClass = isIncrease ? 'stat-item-updated' : '';
 
         html += `<tr class="${rowClass}" data-search="${escapeHtml(url.toLowerCase())}">
             <td class="col-label truncate max-w-[180px]" title="${escapeHtml(url)}">${escapeHtml(shortUrl)}</td>
