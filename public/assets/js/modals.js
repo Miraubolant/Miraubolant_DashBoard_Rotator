@@ -87,8 +87,26 @@ async function addNewSource() {
         option.textContent = data.label;
         select.appendChild(option);
 
+        // Ajouter la source à window.sourceLabels pour la génération automatique du nom
+        if (window.sourceLabels) {
+            window.sourceLabels[data.slug] = data.label;
+        }
+
         // Sélectionner la nouvelle source
         select.value = data.slug;
+
+        // Déclencher l'auto-génération du nom
+        if (typeof generateLinkName === 'function') {
+            const nameInput = document.getElementById('linkName');
+            if (nameInput && (!nameInput.value || nameInput.value.startsWith('Lien '))) {
+                const generatedName = generateLinkName(data.slug);
+                if (generatedName) {
+                    nameInput.value = generatedName;
+                    nameInput.classList.add('flash-update');
+                    setTimeout(() => nameInput.classList.remove('flash-update'), 800);
+                }
+            }
+        }
 
         // Réinitialiser et masquer le formulaire
         input.value = '';
